@@ -6,9 +6,9 @@
 
 # SETUP
 SOURCE_PATH=$HOME/Samsung_dreamlte_Kernel
-DEFCONFIG=g950x_defconfig
-JOBS=2
-OUTPUT=$HOME/a2n_kernel_g950x_9.x
+DEFCONFIG=n950x_defconfig
+JOBS=32
+OUTPUT=$HOME/a2n_kernel_n950x_9
 AIK=$HOME/AIK-Linux
 
 	cd $SOURCE_PATH
@@ -44,6 +44,7 @@ AIK=$HOME/AIK-Linux
 	cp net/l2tp/l2tp_core.ko $OUTPUT/system/lib/modules
 
 	cp arch/arm64/boot/Image $AIK/split_img/boot.img-kernel
+	cp arch/arm64/boot/Image $OUTPUT/Image
 
 	./tools/dtbtool -o $AIK/split_img/boot.img-dt arch/arm64/boot/dts/exynos/
 
