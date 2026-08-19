@@ -21,6 +21,10 @@
 
 #include <asm/uaccess.h>
 
+#ifdef CONFIG_KSU_SUSFS
+#include <linux/susfs.h>
+#endif
+
 int iterate_dir(struct file *file, struct dir_context *ctx)
 {
 	struct inode *inode = file_inode(file);
@@ -157,9 +161,14 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
 		container_of(ctx, struct getdents_callback, ctx);
 	unsigned long d_ino;
 	int reclen = ALIGN(offsetof(struct linux_dirent, d_name) + namlen + 2,
-		sizeof(long));
+	sizeof(long));
 
 	buf->error = -EINVAL;	/* only used if we fail.. */
+#ifdef CONFIG_KSU_SUSFS_SUS_PATH
+	if (susfs_sus_ino_for_filldir64(ino)) {
+		return 0;
+	}
+#endif
 	if (reclen > buf->count)
 		return -EINVAL;
 	d_ino = ino;
@@ -241,9 +250,14 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
 	struct getdents_callback64 *buf =
 		container_of(ctx, struct getdents_callback64, ctx);
 	int reclen = ALIGN(offsetof(struct linux_dirent64, d_name) + namlen + 1,
-		sizeof(u64));
+	sizeof(u64));
 
 	buf->error = -EINVAL;	/* only used if we fail.. */
+#ifdef CONFIG_KSU_SUSFS_SUS_PATH
+	if (susfs_sus_ino_for_filldir64(ino)) {
+		return 0;
+	}
+#endif
 	if (reclen > buf->count)
 		return -EINVAL;
 	dirent = buf->previous;

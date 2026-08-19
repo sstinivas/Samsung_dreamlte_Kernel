@@ -426,10 +426,9 @@ KBUILD_CFLAGS   += -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -DNDEBUG \
 		   -pipe
 
-# Target specific Flags
+# Target specific Flags - patched for gcc-4.9 compat (original was exynos-m1+crc+crypto)
 CFLAGS_ABI	:= -march=armv8-a+crc+crypto \
-		   -mcpu=exynos-m1+crc+crypto \
-		   -mtune=exynos-m1 \
+		   -mtune=cortex-a53 \
 		   -mgeneral-regs-only
 
 KBUILD_CFLAGS   += $(CFLAGS_ABI)

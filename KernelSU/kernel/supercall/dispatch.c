@@ -991,7 +991,7 @@ int ksu_handle_susfs_cmd(unsigned int cmd, void __user **arg)
     switch (cmd) {
 #ifdef CONFIG_KSU_SUSFS_SUS_PATH
     case CMD_SUSFS_ADD_SUS_PATH: {
-        susfs_add_sus_path(arg);
+        susfs_add_sus_path((struct st_susfs_sus_path __user *)*arg);
         return 0;
     }
     case CMD_SUSFS_ADD_SUS_PATH_LOOP: {
@@ -1007,21 +1007,21 @@ int ksu_handle_susfs_cmd(unsigned int cmd, void __user **arg)
 #endif //#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 #ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
     case CMD_SUSFS_ADD_SUS_KSTAT: {
-        susfs_add_sus_kstat(arg);
+        susfs_add_sus_kstat((struct st_susfs_sus_kstat __user *)*arg);
         return 0;
     }
     case CMD_SUSFS_UPDATE_SUS_KSTAT: {
-        susfs_update_sus_kstat(arg);
+        susfs_update_sus_kstat((struct st_susfs_sus_kstat __user *)*arg);
         return 0;
     }
     case CMD_SUSFS_ADD_SUS_KSTAT_STATICALLY: {
-        susfs_add_sus_kstat(arg);
+        susfs_add_sus_kstat((struct st_susfs_sus_kstat __user *)*arg);
         return 0;
     }
 #endif //#ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
 #ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME
     case CMD_SUSFS_SET_UNAME: {
-        susfs_set_uname(arg);
+        susfs_set_uname((struct st_susfs_uname __user *)*arg);
         return 0;
     }
 #endif //#ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME

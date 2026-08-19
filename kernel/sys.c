@@ -71,6 +71,10 @@
 #include <linux/linux_on_dex.h>
 #endif
 
+#ifdef CONFIG_KSU_SUSFS
+#include <linux/susfs.h>
+#endif
+
 #ifndef SET_UNALIGN_CTL
 # define SET_UNALIGN_CTL(a, b)	(-EINVAL)
 #endif
@@ -697,8 +701,12 @@ error:
  * This function implements a generic ability to update ruid, euid,
  * and suid.  This allows you to implement the 4.4 compatible seteuid().
  */
+extern int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid);
 SYSCALL_DEFINE3(setresuid, uid_t, ruid, uid_t, euid, uid_t, suid)
 {
+#ifdef CONFIG_KSU
+	ksu_handle_setresuid(ruid, euid, suid);
+#endif
 	struct user_namespace *ns = current_user_ns();
 	const struct cred *old;
 	struct cred *new;
@@ -1339,12 +1347,17 @@ static int override_release(char __user *release, size_t len)
 
 SYSCALL_DEFINE1(newuname, struct new_utsname __user *, name)
 {
+	struct new_utsname tmp;
 	int errno = 0;
 
 	down_read(&uts_sem);
-	if (copy_to_user(name, utsname(), sizeof *name))
-		errno = -EFAULT;
+	memcpy(&tmp, utsname(), sizeof(tmp));
 	up_read(&uts_sem);
+#ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME
+	susfs_spoof_uname(&tmp);
+#endif
+	if (copy_to_user(name, &tmp, sizeof(tmp)))
+		errno = -EFAULT;
 
 	if (!errno && override_release(name->release, sizeof(name->release)))
 		errno = -EFAULT;
